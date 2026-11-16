@@ -134,6 +134,10 @@ class MicrobitViewModel(application: Application) : AndroidViewModel(application
         setPinAnalogValue(pinIndex = 13, value = target)
     }
 
+    fun setPin(pinIndex: Int, isHigh: Boolean) {
+        bleManager.setPinState(pinIndex, isHigh)
+    }
+
     override fun onCleared() {
         super.onCleared()
         bleScanner.stopScan()

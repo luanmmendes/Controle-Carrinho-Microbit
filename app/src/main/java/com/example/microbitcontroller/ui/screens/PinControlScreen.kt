@@ -25,11 +25,6 @@ import kotlin.Int
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-@Preview
-fun PinControlScreenView(){PinControlScreen("teste", BleConnectionStatus.READY,
-    mapOf(14 to false, 15 to false, 12 to false, 13 to false),onTogglePin = {}, onDisconnect = {})}
-@OptIn(ExperimentalMaterial3Api::class)
-@Composable
 fun PinControlScreen(
     deviceName: String?,
     status: BleConnectionStatus,

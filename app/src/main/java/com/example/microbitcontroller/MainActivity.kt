@@ -21,6 +21,7 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.example.microbitcontroller.ble.BleConnectionStatus
 import com.example.microbitcontroller.ui.MicrobitViewModel
 import com.example.microbitcontroller.ui.screens.PinControlScreen
+import com.example.microbitcontroller.ui.screens.PinControlView
 import com.example.microbitcontroller.ui.screens.ScanScreen
 import com.example.microbitcontroller.ui.theme.MicrobitTheme
 
@@ -90,27 +91,28 @@ class MainActivity : ComponentActivity() {
                     // Navegação baseada no estado da conexão
                     val isConnectedOrConnecting = uiState.connectionStatus != BleConnectionStatus.DISCONNECTED &&
                             uiState.connectionStatus != BleConnectionStatus.ERROR
-
                     if (isConnectedOrConnecting) {
-                        PinControlScreen(
-                            deviceName = uiState.connectedDeviceName,
-                            status = uiState.connectionStatus,
-                            pinStates = uiState.pinStates,
-                            pin12AnalogValue = uiState.pin12AnalogValue,
-                            pin12AnalogInput = uiState.pin12AnalogInput,
-                            pin13AnalogValue = uiState.pin13AnalogValue,
-                            pin13AnalogInput = uiState.pin13AnalogInput,
-                            onPin12InputChange = { viewModel.setPin12AnalogInput(it) },
-                            onApplyPin12Analog = { viewModel.applyPin12AnalogValue(it) },
-                            onPin13InputChange = { viewModel.setPin13AnalogInput(it) },
-                            onApplyPin13Analog = { viewModel.applyPin13AnalogValue(it) },
-                            onTogglePin = { pinIndex ->
-                                viewModel.togglePin(pinIndex)
-                            },
-                            onDisconnect = {
-                                viewModel.disconnect()
-                            }
-                        )
+
+                        PinControlView({pin,isHigh, value -> 1023});
+//                        PinControlScreen(
+//                            deviceName = uiState.connectedDeviceName,
+//                            status = uiState.connectionStatus,
+//                            pinStates = uiState.pinStates,
+//                            pin12AnalogValue = uiState.pin12AnalogValue,
+//                            pin12AnalogInput = uiState.pin12AnalogInput,
+//                            pin13AnalogValue = uiState.pin13AnalogValue,
+//                            pin13AnalogInput = uiState.pin13AnalogInput,
+//                            onPin12InputChange = { viewModel.setPin12AnalogInput(it) },
+//                            onApplyPin12Analog = { viewModel.applyPin12AnalogValue(it) },
+//                            onPin13InputChange = { viewModel.setPin13AnalogInput(it) },
+//                            onApplyPin13Analog = { viewModel.applyPin13AnalogValue(it) },
+//                            onTogglePin = { pinIndex ->
+//                                viewModel.togglePin(pinIndex)
+//                            },
+//                            onDisconnect = {
+//                                viewModel.disconnect()
+//                            }
+//                        )
                     } else {
                         ScanScreen(
                             isScanning = uiState.isScanning,
