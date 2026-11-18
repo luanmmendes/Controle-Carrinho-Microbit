@@ -72,12 +72,17 @@ fun botaoAcelerador(){
 }
 
 @Composable
-@Preview(
-    showSystemUi = true,
-    showBackground = true,
-    device = "spec:width=411dp,height=917dp,orientation=landscape"
-)
-fun PinControlView(  onPinAction: (pin: Int, isHigh: Boolean) -> Unit = { _, _ -> }) {
+//@Preview(
+//    showSystemUi = true,
+//    showBackground = true,
+//    device = "spec:width=411dp,height=917dp,orientation=landscape"
+//)
+//FBcontroler: ForwardsBackwardsController
+fun PinControlView(  onPinAction: (pin: Int,isHigh: Boolean)-> Unit,
+                     FBController:(pin:Int,isHigh:Boolean)->Unit,
+                     setVelocidade: (pin: Int,value:Int)-> Unit,
+                     setCurvatura:(pin:Int,value:Int)->Unit)
+{
     val context = LocalContext.current
     val activity = context as? Activity;
     val interacao = remember { MutableInteractionSource() }
@@ -113,10 +118,12 @@ fun PinControlView(  onPinAction: (pin: Int, isHigh: Boolean) -> Unit = { _, _ -
             Botoes(0.400f, 0.04f, this.maxWidth, this.maxHeight) { isHolding ->
                 if (isHolding) {
                     Log.d("controle", "andando")
-                    onPinAction(15,true,1023);
+                    FBController(15,true);
+                    setVelocidade(12,1023)
+                    setCurvatura(13,512);
                 } else {
                     Log.d("controle", "parado")
-                    onPinAction(15,true,0);
+                    FBController(15,false);
                 }
 
             }
@@ -160,8 +167,12 @@ fun PinControlView(  onPinAction: (pin: Int, isHigh: Boolean) -> Unit = { _, _ -
             Botoes(0.7f, 0.09f, this.maxWidth, this.maxHeight) { isHolding ->
                 if (isHolding) {
                     Log.d("controle", "baixo")
+                    FBController(15,true);
+
+
                 } else {
                     Log.d("controle", "parado");
+                    FBController(15,false);
 
                 }
             }
@@ -178,9 +189,12 @@ fun PinControlView(  onPinAction: (pin: Int, isHigh: Boolean) -> Unit = { _, _ -
             Botoes(0.70f, 0.700f, this.maxWidth, this.maxHeight) { isHolding ->
                 if (isHolding) {
                     Log.d("controle", "baixo")
+                    FBController(15,false);
+                    setVelocidade(15,1023);
+
                 } else {
                     Log.d("controle", "parado");
-
+                    FBController(15,true);
                 }
             }
 
@@ -216,11 +230,11 @@ fun PinControlView(  onPinAction: (pin: Int, isHigh: Boolean) -> Unit = { _, _ -
             isHolding ->
             if (isHolding) {
                 Log.d("controle", "baixo");
-                onPinAction(14,true,1023);
+                onPinAction(14,true);
 
             } else {
                 Log.d("controle", "parado");
-                onPinAction(14,false, 1023);
+                onPinAction(14,false);
             }
         }
     }
