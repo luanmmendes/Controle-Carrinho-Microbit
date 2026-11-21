@@ -15,11 +15,15 @@ import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FloatingActionButton
+import androidx.compose.material3.Slider
+import androidx.compose.material3.SliderColors
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
@@ -31,6 +35,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.booleanResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Devices
 import androidx.compose.ui.tooling.preview.Preview
@@ -45,7 +50,12 @@ import kotlin.math.log
 
 @Composable
 fun Botoes(
-    ratioX: Float, ratioY: Float, maxWidth: Dp, maxHeight: Dp,content: @Composable () -> Unit = {}, onPressChanged: (Boolean) -> Unit
+    ratioX: Float,
+    ratioY: Float,
+    maxWidth: Dp,
+    maxHeight: Dp,
+    content: @Composable () -> Unit = {},
+    onPressChanged: (Boolean) -> Unit
 ) {
     val interactionSource = remember { MutableInteractionSource() }
     val isPressed by interactionSource.collectIsPressedAsState()
@@ -56,21 +66,16 @@ fun Botoes(
 
     Box(
         modifier = Modifier
-            .size(85.dp)
+            .size(125.dp)
             .offset(
                 x = (maxWidth * ratioX), y = (maxHeight * ratioY)
             )
             .clickable(
-                interactionSource = interactionSource, indication = null, onClick = {})){content()}
-}
-@Composable
-fun botaoAcelerador(){
-    Image(
-        painter = painterResource(id = R.drawable.shape_set),
-        contentDescription = null
-    );
+                interactionSource = interactionSource, indication = null, onClick = {})
+    ) { content() }
 }
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 @Preview(
     showSystemUi = true,
@@ -82,8 +87,7 @@ fun PinControlView(
     FBController: (pin: Int, isHigh: Boolean) -> Unit = { _, _ -> },
     setVelocidade: (pin: Int, value: Int) -> Unit = { _, _ -> },
     setCurvatura: (pin: Int, value: Int) -> Unit = { _, _ -> }
-)
-{
+) {
     val context = LocalContext.current
     val activity = context as? Activity;
     val interacao = remember { MutableInteractionSource() }
@@ -96,6 +100,10 @@ fun PinControlView(
         }
     }
     BoxWithConstraints(modifier = Modifier.fillMaxSize()) {
+        Box(Modifier.align(Alignment.BottomCenter)){
+            Box(modifier = Modifier.offset(y = -(45).dp)){}
+            androidx.compose.material3.Button({}, content = {})
+        }
         BoxWithConstraints(
             modifier = Modifier
                 .fillMaxHeight()
@@ -103,10 +111,12 @@ fun PinControlView(
         ) {
 
             Image(
-                painter = painterResource(id = R.drawable.group_1),
+                painter = painterResource(id = R.drawable.group_1_1_),
                 contentDescription = null,
                 alignment = Alignment.CenterStart,
-                modifier = Modifier.fillMaxHeight()
+                modifier = Modifier
+                    .fillMaxHeight()
+                    .offset(150.dp)
             )
             LaunchedEffect(isPressed) {
                 if (isPressed) {
@@ -116,176 +126,80 @@ fun PinControlView(
                 }
             }
             //cima
-            Botoes(0.400f, 0.04f, this.maxWidth, this.maxHeight) { isHolding ->
+            Botoes(0.350f, 0.005f, this.maxWidth, this.maxHeight) { isHolding ->
                 if (isHolding) {
                     Log.d("controle", "andando")
-                    FBController(15,true);
-                    setVelocidade(12,1023)
-                    setCurvatura(13,512);
+                    FBController(15, true);
+                    setVelocidade(12, 1023)
+                    setCurvatura(13, 512);
                 } else {
                     Log.d("controle", "parado")
-                    FBController(15,false);
-                    onPinAction(14,false);
+                    FBController(15, false);
+                    onPinAction(14, false);
                 }
 
             }
             //baixo
-            Botoes(0.400f, 0.750f, this.maxWidth, this.maxHeight) { isHolding ->
+            Botoes(0.350f, 0.700f, this.maxWidth, this.maxHeight) { isHolding ->
                 if (isHolding) {
                     Log.d("controle", "baixo")
-                    setVelocidade(12,1023);
-                    setCurvatura(13,512);
-                    FBController(15,false);
+                    setVelocidade(12, 1023);
+                    setCurvatura(13, 512);
+                    FBController(15, false);
                 } else {
                     Log.d("controle", "parado");
-                    setVelocidade(12,0);
-                    setCurvatura(13,512);
-                    onPinAction(14,false);
+                    setVelocidade(12, 0);
+                    setCurvatura(13, 512);
+                    onPinAction(14, false);
 
                 }
             }
-            //direita
-            Botoes(0.750f, 0.400f, this.maxWidth, this.maxHeight) { isHolding ->
-                if (isHolding) {
-                    Log.d("controle", "baixo")
-                    setVelocidade(12,0);
-                    setCurvatura(13,1023);
-                    FBController(15,true);
-                } else {
-                    Log.d("controle", "parado");
-                    setVelocidade(12,0);
-                    setCurvatura(13,0);
-                    FBController(15,false);
 
+        }
+        BoxWithConstraints(Modifier.align(Alignment.CenterEnd)) {
+            Image(
+                painter = painterResource(id = R.drawable.group_2),
+                contentDescription = null,
+                modifier = Modifier
+                    .size(400.dp)
+                    .offset(-(30).dp)
+            )
 
-                }
-            }
             //esquerdo
-            Botoes(0.04f, 0.400f, this.maxWidth, this.maxHeight) { isHolding ->
+            Botoes(-(0.030f), 0.350f, this.maxWidth, this.maxHeight) { isHolding ->
                 if (isHolding) {
                     Log.d("controle", "baixo")
-                    setVelocidade(12,0);
-                    setCurvatura(13,0);
-                    FBController(15,true);
+                    setVelocidade(12, 0);
+                    setCurvatura(13, 0);
+                    FBController(15, true);
 
                 } else {
                     Log.d("controle", "parado");
-                    setVelocidade(12,0);
-                    setCurvatura(13,0);
-                    FBController(15,false);
+                    setVelocidade(12, 0);
+                    setCurvatura(13, 0);
+                    FBController(15, false);
 
                 }
             }
-            //diagonal superior esquerda
-            Botoes(0.090f, 0.09f, this.maxWidth, this.maxHeight) { isHolding ->
+            //direito
+            Botoes(0.270f, 0.350f, this.maxWidth, this.maxHeight) { isHolding ->
                 if (isHolding) {
                     Log.d("controle", "baixo")
-                    setVelocidade(12,1023);
-                    setCurvatura(13,256);
-                    FBController(15,true);
-                } else {
-                    Log.d("controle", "parado");
-                    setVelocidade(12,0);
-                    setCurvatura(13,0);
-                    FBController(15,false);
-
-                }
-            }
-            //diagonal superior direita
-            Botoes(0.7f, 0.09f, this.maxWidth, this.maxHeight) { isHolding ->
-                if (isHolding) {
-                    Log.d("controle", "baixo")
-                    setVelocidade(12,1023);
-                    setCurvatura(13,768);
-                    FBController(15,true);
-
+                    setVelocidade(12, 0);
+                    setCurvatura(13, 0);
+                    FBController(15, true);
 
                 } else {
                     Log.d("controle", "parado");
-                    setVelocidade(12,0);
-                    setCurvatura(13,0);
-                    onPinAction(14,false);
+                    setVelocidade(12, 0);
+                    setCurvatura(13, 0);
+                    FBController(15, false);
 
                 }
-            }
-            //diagonal inferior esquerda
-            Botoes(0.10f, 0.700f, this.maxWidth, this.maxHeight) { isHolding ->
-                if (isHolding) {
-                    Log.d("controle", "baixo")
-                    setVelocidade(12,1023);
-                    setCurvatura(13,256);
-                    FBController(15,false);
-                } else {
-                    Log.d("controle", "parado");
-                    setVelocidade(12,0);
-                    setCurvatura(13,0);
-                    onPinAction(14,false);
-                    FBController(15,false);
-
-                }
-            }
-            //diagonal inferior direita
-            Botoes(0.70f, 0.700f, this.maxWidth, this.maxHeight) { isHolding ->
-                if (isHolding) {
-                    Log.d("controle", "baixo")
-                    setVelocidade(12,1023);
-                    setCurvatura(13,768);
-                    FBController(15,false);
-
-                } else {
-                    Log.d("controle", "parado");
-                    Log.d("controle", "baixo")
-                    onPinAction(14,false);
-                    setVelocidade(12,0);
-                    setCurvatura(13,0);
-                    FBController(15,false);
-                }
-            }
-
-
-//                    modifier = Modifier
-//                        .size(70.dp)
-//                        .offset(maxWidth * 0.06f, (maxHeight * 0.400f)),
-//                    onClick = {}) { }
-////                FloatingActionButton(
-//                    modifier = Modifier
-//                        .size(70.dp)
-//                        .offset(maxWidth * 0.090f, (maxHeight * 0.09f)),
-//                    onClick = {}) { }
-//                FloatingActionButton(
-//                    modifier = Modifier
-//                        .size(70.dp)
-//                        .offset(maxWidth * 0.7f, (maxHeight * 0.09f)),
-//                    onClick = {}) { }
-
-
-//                FloatingActionButton(
-//                    modifier = Modifier
-//                        .size(70.dp)
-//                        .offset(maxWidth * 0.10f, (maxHeight * 0.700f) - 5.dp), onClick = {}) { }
-//                FloatingActionButton(
-//                    modifier = Modifier
-//                        .size(70.dp)
-//                        .offset(maxWidth * 0.70f, (maxHeight * 0.700f) - 3.dp), onClick = {}) { }
-
-        }
-        Botoes(0.785f, 0.400f, this.maxWidth, this.maxHeight,{botaoAcelerador()}) {
-
-            isHolding ->
-            if (isHolding) {
-                Log.d("controle", "baixo");
-                onPinAction(14,true);
-
-
-            } else {
-                Log.d("controle", "parado");
-                onPinAction(14,false);
-                setVelocidade(12,0);
-                setCurvatura(13,512);
             }
         }
     }
-    }
+}
 
 
 
